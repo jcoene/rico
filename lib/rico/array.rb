@@ -4,7 +4,7 @@ module Rico
     include Enumerable
     extend Forwardable
 
-    def_delegators :members, :each, :[]
+    def_delegators :members, :each, :[], :length, :count
 
     public
 
@@ -41,14 +41,6 @@ module Rico
     def member?(item)
       members.include? item
     end
-
-    # Returns the number of items in the array
-    #
-    # Returns an Integer
-    def length
-      members.length
-    end
-    alias_method :count, :length
 
     protected
 
