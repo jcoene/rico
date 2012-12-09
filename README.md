@@ -7,7 +7,7 @@ Rico provides primative data types on Riak.
 Add rico to your Gemfile and `bundle install`:
 
 ```ruby
-  gem "rico"
+gem "rico"
 ```
 
 ## Usage
@@ -16,21 +16,20 @@ Instantiate a Rico object with a **bucket** and a **key** then perform operation
 
 Here's an example of how to use a set to manage a list of followed users:
 
-```
-  # Create a new instance for "follows/1"
-  follows = Rico::Set.new "follows", @user.id
+```ruby
+follows = Rico::Set.new "follows", @user.id
 
-  follows.member? @other_user.id  # => false
+follows.member? @other_user.id  # => false
 
-  follows.add @other_user.id
+follows.add @other_user.id
 
-  follows.member? @other_user.id  # => true
-  follows.length                  # => 1
+follows.member? @other_user.id  # => true
+follows.length                  # => 1
 
-  follows.remove @other_user.id
+follows.remove @other_user.id
 
-  follows.member? @other_user.id  # => false
-  follows.length                  # => 0
+follows.member? @other_user.id  # => false
+follows.length                  # => 0
 ```
 
 ## Configuration
@@ -38,18 +37,18 @@ Here's an example of how to use a set to manage a list of followed users:
 By default, Rico uses a generic Riak::Client instance for operations. You can specify your own (perhaps inside of a rails initializer) like so:
 
 ```ruby
-  Rico.configure do |c|
-    c.riak = Riak::Client.new(http_port: 1234, ...)
-  end
+Rico.configure do |c|
+  c.riak = Riak::Client.new(http_port: 1234, ...)
+end
 ```
 
 You can also provide a namespace to be used as a key prefix:
 
 ```ruby
-  Rico.configure do |c|
-    c.namespace = "development"             # => "development:BUCKET:KEY"
-    c.namespace = ["my_app", "production"]  # => "my_app:production:BUCKET:KEY"
-  end
+Rico.configure do |c|
+  c.namespace = "development"             # => "development:BUCKET:KEY"
+  c.namespace = ["my_app", "production"]  # => "my_app:production:BUCKET:KEY"
+end
 ```
 
 ## Data Types
@@ -57,48 +56,48 @@ You can also provide a namespace to be used as a key prefix:
 **Arrays** - sequence of values
 
 ```ruby
-  a = Rico::Array.new "bucket", "key"
-  a.add [3, 1, 1, 4, 2]
-  a.members   # => [3, 1, 1, 4, 2]
-  a.length    # => 5
+a = Rico::Array.new "bucket", "key"
+a.add [3, 1, 1, 4, 2]
+a.members   # => [3, 1, 1, 4, 2]
+a.length    # => 5
 ```
 
 **Lists** - sorted sequence of values
 
 ```ruby
-  l = Rico::List.new "bucket", "key"
-  l.add [3, 1, 1, 4, 2]
-  l.members   # => [1, 1, 2, 3, 4]
-  l.length    # => 5
+l = Rico::List.new "bucket", "key"
+l.add [3, 1, 1, 4, 2]
+l.members   # => [1, 1, 2, 3, 4]
+l.length    # => 5
 ```
 
 **Sets** - unique sequence of values
 
 ```ruby
-  s = Rico::Set.new "bucket", "key"
-  s.add [3, 1, 1, 4, 2]
-  s.members   # => [3, 1, 4, 2]
-  s.length    # => 4
+s = Rico::Set.new "bucket", "key"
+s.add [3, 1, 1, 4, 2]
+s.members   # => [3, 1, 4, 2]
+s.length    # => 4
 ```
 
 **Sorted Sets** - unique, sorted sequence of values
 
 ```ruby
-  s = Rico::SortedSet.new "bucket", "key"
-  s.add [3, 1, 1, 4, 2]
-  s.members   # => [1, 2, 3, 4]
-  s.length    # => 4
+s = Rico::SortedSet.new "bucket", "key"
+s.add [3, 1, 1, 4, 2]
+s.members   # => [1, 2, 3, 4]
+s.length    # => 4
 ```
 
 **Values** - generic serialized values
 
 ```ruby
-  s = Rico::Value.new "bucket", "key"
-  s.exists?   # => false
-  s.get       # => nil
-  s.set "bob"
-  s.get       # => "bob"
-  s.exists?   # => true
+v = Rico::Value.new "bucket", "key"
+v.exists?   # => false
+v.get       # => nil
+v.set "bob"
+v.get       # => "bob"
+v.exists?   # => true
 ```
 
 ## Notes
