@@ -17,4 +17,5 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency              "riak-client", "~> 1.1"
   gem.add_development_dependency  "rspec", "~> 2.12"
+  gem.add_development_dependency  "guard-rspec", "~> 2.3"
 end
