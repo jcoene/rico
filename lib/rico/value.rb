@@ -20,7 +20,7 @@ module Rico
     #
     # Returns true if stored, false if not
     def setnx(value)
-      if redis_object.exists?
+      if exists?
         false
       else
         set value

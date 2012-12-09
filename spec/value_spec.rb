@@ -42,6 +42,25 @@ describe Rico::Value do
     end
   end
 
+  describe "#setnx" do
+    it "writes the value, returns true if new" do
+      a = Rico::Value.new RiakHelpers.bucket, "setnx_new"
+      a.setnx("value").should eql true
+      b = Rico::Value.new RiakHelpers.bucket, "setnx_new"
+      b.get.should eql "value"
+    end
+
+    it "does nothing, returns false if the value exists" do
+      a = Rico::Value.new RiakHelpers.bucket, "setnx_exists"
+      a.set "value"
+      b = Rico::Value.new RiakHelpers.bucket, "setnx_exists"
+      b.setnx("other").should eql false
+      b.get.should eql "value"
+      c = Rico::Value.new RiakHelpers.bucket, "setnx_exists"
+      c.get.should eql "value"
+    end
+  end
+
   describe "#delete" do
     it "deletes an existing object" do
       a = Rico::Value.new RiakHelpers.bucket, "delete_existing"
