@@ -10,7 +10,6 @@ module RiakHelpers
 
   def self.reset!
     Rico.namespace = "test"
-    Rico.riak = Riak::Client.new
 
     Riak.disable_list_keys_warnings = true
     b = Rico.bucket(bucket)

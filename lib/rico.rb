@@ -40,12 +40,16 @@ module Rico
     @namespace = namespace
   end
 
-  def self.riak
-    @riak ||= Riak::Client.new
+  def self.options
+    @options || {}
   end
 
-  def self.riak=(riak)
-    @riak = riak
+  def self.options=(options)
+    @options = options
+  end
+
+  def self.riak
+    Thread.current[:riak] ||= Riak::Client.new(options)
   end
 end
 

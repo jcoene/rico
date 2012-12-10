@@ -14,13 +14,12 @@ describe Rico do
       Rico.namespace.should eql "myapp"
     end
 
-    it "accepts a riak client instance" do
-      riak = Riak::Client.new
+    it "accepts a hash of options" do
       Rico.configure do |r|
-        r.riak = riak
+        r.options = { http_port: 5151 }
       end
 
-      Rico.riak.should eql riak
+      Rico.options.should eql({ http_port: 5151 })
     end
   end
 

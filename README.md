@@ -36,11 +36,11 @@ follows.length                  # => 0
 
 ## Configuration
 
-By default, Rico uses a generic Riak::Client instance for operations. You can specify your own (perhaps inside of a rails initializer) like so:
+By default, Rico uses a generic Riak::Client instance for operations. You can specify your own options for the Riak client (perhaps inside of a rails initializer) like so:
 
 ```ruby
 Rico.configure do |c|
-  c.riak = Riak::Client.new(http_port: 1234, ...)
+  c.options = { http_port: 1234, ... }
 end
 ```
 
