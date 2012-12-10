@@ -71,4 +71,25 @@ describe Rico::Value do
       b.get.should eql nil
     end
   end
+
+  describe ".resolve" do
+    it "just returns the first sibling" do
+      datas = ["Tom", "Jerry"]
+      conflicted = RiakHelpers.build_conflicted_robject "value_resolve_simple", datas
+      result = Rico::Value.resolve(conflicted)
+      result.data.should eql "Tom"
+    end
+
+    it "properly deletes deleted values after resolve" do
+      datas = [
+        { "_type" => "array", "_values" => [1,2,3,4] },
+        { "_type" => "array", "_values" => [1,2,3], "_deletes" => [4] }
+      ]
+      conflicted = RiakHelpers.build_conflicted_robject "array_resolve_delete", datas
+      result = Rico::Array.resolve(conflicted)
+      result.data["_values"].should eql [1,2,3]
+      result.data["_deletes"].should eql [4]
+    end
+  end
+
 end

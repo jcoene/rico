@@ -133,6 +133,29 @@ describe Rico::Array do
     end
   end
 
+  describe ".resolve" do
+    it "properly resolves missing values" do
+      datas = [
+        { "_type" => "array", "_values" => [1,2,3] },
+        { "_type" => "array", "_values" => [1,2,3,4] }
+      ]
+      conflicted = RiakHelpers.build_conflicted_robject "array_resolve_simple", datas
+      result = Rico::Array.resolve(conflicted)
+      result.data["_values"].should eql [1,2,3,4]
+    end
+
+    it "properly deletes deleted values after resolve" do
+      datas = [
+        { "_type" => "array", "_values" => [1,2,3,4] },
+        { "_type" => "array", "_values" => [1,2,3], "_deletes" => [4] }
+      ]
+      conflicted = RiakHelpers.build_conflicted_robject "array_resolve_delete", datas
+      result = Rico::Array.resolve(conflicted)
+      result.data["_values"].should eql [1,2,3]
+      result.data["_deletes"].should eql [4]
+    end
+  end
+
   it "is enumerable" do
     a = Rico::Array.new RiakHelpers.bucket, "enumerable"
     a.add(3, 1, 4, 1, 5, 9)

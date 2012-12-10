@@ -27,5 +27,18 @@ module Rico
         true
       end
     end
+
+    # Resolve conflict between one or more RObject siblings
+    #
+    # This currently just returns the first sibling
+    #
+    # robjects - array of RObjects to resolve
+    #
+    # Returns a single RObject result or nil
+    def self.resolve(robject)
+      obj = Riak::RObject.new(robject.bucket, robject.key)
+      obj.data = robject.siblings.first.data
+      obj
+    end
   end
 end

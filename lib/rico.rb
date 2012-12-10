@@ -8,9 +8,19 @@ require "rico/set"
 require "rico/sorted_set"
 require "rico/value"
 
+require "rico/resolver"
+
 require "rico/version"
 
 module Rico
+
+  TYPES = {
+    "Array" => "array",
+    "List" => "list",
+    "Set" => "set",
+    "SortedSet" => "sset",
+    "Value" => "value"
+  }
 
   def self.configure
     yield self if block_given?
@@ -38,3 +48,5 @@ module Rico
     @riak = riak
   end
 end
+
+Riak::RObject.on_conflict(&Rico::Resolver.to_proc)

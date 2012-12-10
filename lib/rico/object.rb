@@ -2,7 +2,7 @@ module Rico
   module Object
     extend Forwardable
 
-    def_delegators :riak_object, :store, :delete
+    def_delegators :riak_object, :conflict?, :delete, :store
 
     # Initialize an object with a bucket and key
     #
@@ -26,7 +26,7 @@ module Rico
     def mutate(value)
       @data = value
       riak_object.data = value
-      riak_object.store
+      store
     end
 
     # Determine whether an object exists or not
@@ -37,6 +37,11 @@ module Rico
     end
 
     protected
+
+    def type_key
+      name = self.class.name.split("::").last
+      Rico::TYPES[name]
+    end
 
     def riak_object
       @riak_object ||= Rico.bucket(@bucket).get_or_new @key
