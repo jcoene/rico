@@ -59,7 +59,8 @@ module Rico
 
       result -= deletions
 
-      obj = Riak::RObject.new(robject.bucket, robject.key)
+      obj = robject.dup
+      obj.siblings = [obj.siblings.first]
       obj.data = { "_values" => result, "_deletes" => deletions }
       obj
     end

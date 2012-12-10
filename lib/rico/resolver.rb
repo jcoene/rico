@@ -11,7 +11,7 @@ module Rico
         klass = Rico.const_get(klass_name)
         return nil unless klass.respond_to?(:resolve)
 
-        klass.resolve(robject.siblings)
+        klass.resolve(robject)
       end
     end
   end
