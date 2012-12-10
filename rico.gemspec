@@ -16,6 +16,8 @@ Gem::Specification.new do |gem|
   gem.version       = Rico::VERSION
 
   gem.add_dependency              "riak-client", "~> 1.1"
+
+  gem.add_development_dependency  "rake", "~> 10.0"
   gem.add_development_dependency  "rspec", "~> 2.12"
   gem.add_development_dependency  "guard-rspec", "~> 2.3"
 end
