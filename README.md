@@ -1,5 +1,7 @@
 # Rico
 
+[![Build Status](https://secure.travis-ci.org/jcoene/rico.png?branch=master)](https://travis-ci.org/jcoene/rico)
+
 Rico provides primative data types on Riak.
 
 ## Installation
@@ -116,8 +118,7 @@ Data is persisted at operation time. For example, List#add(5) will immediately u
 
 ## TODO
 
-- Automatic sibling resolution for simple types
-- Ability to provide sibling resolution callback
+- Ability to provide custom sibling resolution callbacks
 
 ## Contributing
 
