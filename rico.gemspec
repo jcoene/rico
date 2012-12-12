@@ -4,7 +4,7 @@ require File.expand_path('../lib/rico/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["Jason Coene"]
   gem.email         = ["jcoene@gmail.com"]
-  gem.description   = "Primative data types on Riak"
+  gem.description   = "Simple data types persisted to Riak"
   gem.summary       = gem.description
   gem.homepage      = "https://github.com/jcoene/rico"
 
