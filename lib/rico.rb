@@ -7,6 +7,7 @@ require "rico/array"
 require "rico/list"
 require "rico/map"
 require "rico/set"
+require "rico/sorted_map"
 require "rico/sorted_set"
 require "rico/value"
 
