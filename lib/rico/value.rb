@@ -6,7 +6,7 @@ module Rico
     #
     # Returns the deserialized value
     def get
-      (data || {})["_value"]
+      data["_value"]
     end
 
     # Sets and stores the new value for the object
