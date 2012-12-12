@@ -13,6 +13,13 @@ describe Rico::Array do
       b.members.should eql [1, 2, 3]
     end
 
+    it "retains a single value as an array" do
+      a = Rico::Array.new RiakHelpers.bucket, "add_flattens_values"
+      a.add([1, 2, 3])
+      b = Rico::Array.new RiakHelpers.bucket, "add_flattens_values"
+      b.members.should eql [[1, 2, 3]]
+    end
+
     it "allows duplicate values" do
       a = Rico::Array.new RiakHelpers.bucket, "add_allows_duplicates"
       a.add(1, 2, 3)
