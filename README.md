@@ -2,7 +2,9 @@
 
 [![Build Status](https://secure.travis-ci.org/jcoene/rico.png?branch=master)](https://travis-ci.org/jcoene/rico)
 
-Rico provides primative data types on Riak.
+Rico provides simple data types persisted to Riak.
+
+Supports Array, List, Set, SortedSet, Map, SortedMap, CappedSortedMap, Value objects.
 
 ## Installation
 
@@ -59,7 +61,7 @@ end
 
 ```ruby
 a = Rico::Array.new "bucket", "key"
-a.add [3, 1, 1, 4, 2]
+a.add 3, 1, 1, 4, 2
 a.members   # => [3, 1, 1, 4, 2]
 a.length    # => 5
 ```
@@ -68,7 +70,7 @@ a.length    # => 5
 
 ```ruby
 l = Rico::List.new "bucket", "key"
-l.add [3, 1, 1, 4, 2]
+l.add 3, 1, 1, 4, 2
 l.members   # => [1, 1, 2, 3, 4]
 l.length    # => 5
 ```
@@ -77,7 +79,7 @@ l.length    # => 5
 
 ```ruby
 s = Rico::Set.new "bucket", "key"
-s.add [3, 1, 1, 4, 2]
+s.add 3, 1, 1, 4, 2
 s.members   # => [3, 1, 4, 2]
 s.length    # => 4
 ```
@@ -86,9 +88,39 @@ s.length    # => 4
 
 ```ruby
 s = Rico::SortedSet.new "bucket", "key"
-s.add [3, 1, 1, 4, 2]
+s.add 3, 1, 1, 4, 2
 s.members   # => [1, 2, 3, 4]
 s.length    # => 4
+```
+
+**Maps** - key-value mappings
+
+```ruby
+m = Rico::Map.new "bucket", "key"
+m.add({"a" => 1})
+m.add({"b" => 2, "c" => 3})
+m.members   # => {"a" => 1, "b" => 2, "c" => 3}
+m.length    # => 3
+```
+
+**Sorted Maps** - key-value mappings sorted by key
+
+```ruby
+m = Rico::SortedMap.new "bucket", "key"
+m.add({"b" => 2, "c" => 3})
+m.add({"a" => 1})
+m.members   # => {"a" => 1, "b" => 2, "c" => 3}
+m.length    # => 3
+```
+
+**Capped Sorted Maps** - key-value mappings sorted by key and bound by size
+
+```ruby
+m = Rico::CappedSortedMap.new "bucket", "key", limit: 2
+m.add({"b" => 2, "c" => 3})
+m.add({"a" => 1})
+m.members   # => {"b" => 2, "c" => 3}
+m.length    # => 2
 ```
 
 **Values** - generic serialized values
@@ -102,15 +134,25 @@ v.get       # => "bob"
 v.exists?   # => true
 ```
 
+## Content Types
+
+**JSON**: Objects are serialized and stored as JSON by default, using a Content-Type header of `application/json`
+
+**JSON+gzip**: Objects can be serialized and stored as JSON and then compressed with gzip by specifying a Content-Type header of `application/x-json`. Note that it is not currently possible non-JSON data with the gzip content header using Rico.
+
+```ruby
+s = Rico::Set.new "bucket", "key"
+s.content_type = "application/x-gzip"
+s.add 1, 2, 3
+s.get       # => [1, 2, 3]
+s.raw_data  # => "\u001F\x8B\b\u0000G...."
+```
+
 ## Notes
 
 ### Enumerable
 
 Enumerable-looking types are indeed Enumerable
-
-### Serialization
-
-Data is serialized using the Riak client libary provided by Basho, which serializes values as JSON and sets a Content-Type value of "application/json"
 
 ### Persistence
 
