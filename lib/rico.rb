@@ -1,6 +1,7 @@
 require "riak"
 
 require "rico/object"
+require "rico/collection"
 
 require "rico/array"
 require "rico/list"
