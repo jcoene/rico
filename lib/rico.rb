@@ -53,4 +53,33 @@ module Rico
   end
 end
 
+module Riak
+  module Serializers
+    module ApplicationXGZIP
+      extend self
+
+      def dump(object)
+        json = ApplicationJSON.dump(object)
+        io = StringIO.new
+        gz = Zlib::GzipWriter.new(io)
+        gz.write(json)
+        gz.close
+
+        io.string
+      end
+
+      def load(string)
+        io = StringIO.new(string)
+        gz = Zlib::GzipReader.new(io)
+        json = gz.read
+        gz.close
+
+        ApplicationJSON.load(json)
+      end
+    end
+
+    Serializers['application/x-gzip'] = ApplicationXGZIP
+  end
+end
+
 Riak::RObject.on_conflict(&Rico::Resolver.to_proc)

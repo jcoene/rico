@@ -5,6 +5,41 @@ describe Rico::Value do
     RiakHelpers.reset!
   end
 
+  def gunzip(string)
+    io = StringIO.new(string)
+    gz = Zlib::GzipReader.new(io)
+    object = gz.read
+    gz.close
+    object
+  end
+
+  describe "gzip serialization" do
+    it "sets the content type of gzip objects" do
+      a = Rico::Value.new RiakHelpers.bucket, "value_gzip_content_type"
+      a.content_type = "application/x-gzip"
+      a.set "JOHN DOE"
+      a.content_type.should eql "application/x-gzip"
+    end
+
+    it "properly serializes of gzip objects" do
+      a = Rico::Value.new RiakHelpers.bucket, "value_gzip_content_type"
+      a.content_type = "application/x-gzip"
+      a.set "JOHN DOE"
+      gunzip(a.raw_data).should eql "\"JOHN DOE\""
+      a.content_type.should eql "application/x-gzip"
+    end
+
+    it "retrieves the content type of persisted gzip objects" do
+      a = Rico::Value.new RiakHelpers.bucket, "value_gzip_content_type_2"
+      a.content_type = "application/x-gzip"
+      a.set "JOHN DOE"
+
+      b = Rico::Value.new RiakHelpers.bucket, "value_gzip_content_type_2"
+      b.content_type.should eql "application/x-gzip"
+      b.get.should eql "JOHN DOE"
+    end
+  end
+
   describe "#exists?" do
     it "returns true if it exists" do
       a = Rico::Value.new RiakHelpers.bucket, "value_exists_true"
