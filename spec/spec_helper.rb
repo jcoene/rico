@@ -16,10 +16,6 @@ module RiakHelpers
     b.keys.each do |k|
       b.delete k
     end
-
-    a = Rico::Array.new bucket, "visual_array"
-    a.add 1,2,3,4,5,6
-    a.remove 6
   end
 
   def self.build_conflicted_robject(key, values)

@@ -29,15 +29,17 @@ module Rico
 
     protected
 
+    def build_map_add(items)
+      { "_type" => type_key, "_values" => compute_add(items) }
+    end
+
     def build_map_remove(items)
       keys = extract_keys(items)
       { "_type" => type_key, "_values" => compute_remove(items), "_deletes" => keys }
     end
 
     def compute_add(items)
-      Array(items).inject(members) do |res, h|
-        res.merge(h)
-      end
+      members.merge(items)
     end
 
     def compute_remove(items)

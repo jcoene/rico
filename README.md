@@ -61,7 +61,7 @@ end
 
 ```ruby
 a = Rico::Array.new "bucket", "key"
-a.add 3, 1, 1, 4, 2
+a.add [3, 1, 1, 4, 2]
 a.members   # => [3, 1, 1, 4, 2]
 a.length    # => 5
 ```
@@ -70,7 +70,7 @@ a.length    # => 5
 
 ```ruby
 l = Rico::List.new "bucket", "key"
-l.add 3, 1, 1, 4, 2
+l.add [3, 1, 1, 4, 2]
 l.members   # => [1, 1, 2, 3, 4]
 l.length    # => 5
 ```
@@ -79,7 +79,7 @@ l.length    # => 5
 
 ```ruby
 s = Rico::Set.new "bucket", "key"
-s.add 3, 1, 1, 4, 2
+s.add [3, 1, 1, 4, 2]
 s.members   # => [3, 1, 4, 2]
 s.length    # => 4
 ```
@@ -88,7 +88,7 @@ s.length    # => 4
 
 ```ruby
 s = Rico::SortedSet.new "bucket", "key"
-s.add 3, 1, 1, 4, 2
+s.add [3, 1, 1, 4, 2]
 s.members   # => [1, 2, 3, 4]
 s.length    # => 4
 ```
@@ -143,7 +143,7 @@ v.exists?   # => true
 ```ruby
 s = Rico::Set.new "bucket", "key"
 s.content_type = "application/x-gzip"
-s.add 1, 2, 3
+s.add [1,2,3]
 s.get       # => [1, 2, 3]
 s.raw_data  # => "\u001F\x8B\b\u0000G...."
 ```

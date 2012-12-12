@@ -13,13 +13,6 @@ describe Rico::Map do
       b.members.should eql({"a" => 1, "b" => 2, "c" => 3, "d" => 4, "e" => 5})
     end
 
-    it "writes multiple hashes to the map" do
-      a = Rico::Map.new RiakHelpers.bucket, "map_add_multiple_hashes"
-      a.add({"a" => 1, "b" => 2, "c" => 3}, {"d" => 4, "e" => 5})
-      b = Rico::Map.new RiakHelpers.bucket, "map_add_multiple_hashes"
-      b.members.should eql({"a" => 1, "b" => 2, "c" => 3, "d" => 4, "e" => 5})
-    end
-
     it "supports multiple multiple writes to the map" do
       a = Rico::Map.new RiakHelpers.bucket, "map_add_multiple_writes"
       a.add({"a" => 1, "b" => 2, "c" => 3})
@@ -43,7 +36,7 @@ describe Rico::Map do
       a = Rico::Map.new RiakHelpers.bucket, "map_remove_multiple_keys_string"
       a.add({"a" => 1, "b" => 2, "c" => 3})
       b = Rico::Map.new RiakHelpers.bucket, "map_remove_multiple_keys_string"
-      b.remove("a", "c")
+      b.remove(["a", "c"])
       c = Rico::Map.new RiakHelpers.bucket, "map_remove_multiple_keys_string"
       c.members.should eql({"b" => 2})
     end
@@ -52,7 +45,7 @@ describe Rico::Map do
       a = Rico::Map.new RiakHelpers.bucket, "map_remove_multiple_keys_symbol"
       a.add({"a" => 1, "b" => 2, "c" => 3})
       b = Rico::Map.new RiakHelpers.bucket, "map_remove_multiple_keys_symbol"
-      b.remove(:a, :c)
+      b.remove([:a, :c])
       c = Rico::Map.new RiakHelpers.bucket, "map_remove_multiple_keys_symbol"
       c.members.should eql({"b" => 2})
     end
@@ -61,7 +54,7 @@ describe Rico::Map do
       a = Rico::Map.new RiakHelpers.bucket, "map_remove_multiple_keys_integer"
       a.add({1 => 1, 2 => 2, 3 => 3})
       b = Rico::Map.new RiakHelpers.bucket, "map_remove_multiple_keys_integer"
-      b.remove(1, 3)
+      b.remove([1, 3])
       c = Rico::Map.new RiakHelpers.bucket, "map_remove_multiple_keys_integer"
       c.members.should eql({"2" => 2})
     end
@@ -70,9 +63,9 @@ describe Rico::Map do
       a = Rico::Map.new RiakHelpers.bucket, "map_remove_single_key_tuple"
       a.add({"a" => 1, "b" => 2, "c" => 3})
       b = Rico::Map.new RiakHelpers.bucket, "map_remove_single_key_tuple"
-      b.remove({"a" => 1})
+      b.remove({"a" => 1, "b" => 2})
       c = Rico::Map.new RiakHelpers.bucket, "map_remove_single_key_tuple"
-      c.members.should eql({"b" => 2, "c" => 3})
+      c.members.should eql({"c" => 3})
     end
   end
 

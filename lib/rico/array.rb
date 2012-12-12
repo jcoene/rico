@@ -32,5 +32,23 @@ module Rico
       obj.data = { "_values" => result, "_deletes" => deletions }
       obj
     end
+
+    protected
+
+    def build_map_add(items)
+      { "_type" => type_key, "_values" => compute_add(items) }
+    end
+
+    def build_map_remove(items)
+      { "_type" => type_key, "_values" => compute_remove(items), "_deletes" => items }
+    end
+
+    def compute_add(items)
+      members + Array(items)
+    end
+
+    def compute_remove(items)
+      members - Array(items)
+    end
   end
 end

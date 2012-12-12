@@ -6,91 +6,91 @@ describe Rico::Array do
   end
 
   describe "#add" do
+    it "writes a single value to an array" do
+      a = Rico::Array.new RiakHelpers.bucket, "array_add_single_value"
+      a.add 5
+      b = Rico::Array.new RiakHelpers.bucket, "array_add_single_value"
+      b.members.should eql [5]
+    end
+
     it "writes values to an array" do
-      a = Rico::Array.new RiakHelpers.bucket, "add_writes_values"
-      a.add(1, 2, 3)
-      b = Rico::Array.new RiakHelpers.bucket, "add_writes_values"
+      a = Rico::Array.new RiakHelpers.bucket, "array_add_writes_values"
+      a.add [1, 2, 3]
+      b = Rico::Array.new RiakHelpers.bucket, "array_add_writes_values"
       b.members.should eql [1, 2, 3]
     end
 
-    it "retains a single value as an array" do
-      a = Rico::Array.new RiakHelpers.bucket, "add_flattens_values"
-      a.add([1, 2, 3])
-      b = Rico::Array.new RiakHelpers.bucket, "add_flattens_values"
-      b.members.should eql [[1, 2, 3]]
-    end
-
     it "allows duplicate values" do
-      a = Rico::Array.new RiakHelpers.bucket, "add_allows_duplicates"
-      a.add(1, 2, 3)
-      a.add(2, 3, 4)
-      b = Rico::Array.new RiakHelpers.bucket, "add_allows_duplicates"
+      a = Rico::Array.new RiakHelpers.bucket, "array_add_allows_duplicates"
+      a.add [1, 2, 3]
+      a.add [2, 3, 4]
+      b = Rico::Array.new RiakHelpers.bucket, "array_add_allows_duplicates"
       b.members.should eql [1, 2, 3, 2, 3, 4]
     end
 
     it "retains order of addition" do
-      a = Rico::Array.new RiakHelpers.bucket, "add_retains_order"
-      a.add(5, 3, 1, 6, 7)
-      b = Rico::Array.new RiakHelpers.bucket, "add_retains_order"
+      a = Rico::Array.new RiakHelpers.bucket, "array_add_retains_order"
+      a.add [5, 3, 1, 6, 7]
+      b = Rico::Array.new RiakHelpers.bucket, "array_add_retains_order"
       b.members.should eql [5, 3, 1, 6, 7]
     end
 
     it "works with strings" do
-      a = Rico::Array.new RiakHelpers.bucket, "add_works_with_strings"
-      a.add("john", "joe", "jason")
-      a.add("brian", "bob")
-      b = Rico::Array.new RiakHelpers.bucket, "add_works_with_strings"
+      a = Rico::Array.new RiakHelpers.bucket, "array_add_works_with_strings"
+      a.add ["john", "joe", "jason"]
+      a.add ["brian", "bob"]
+      b = Rico::Array.new RiakHelpers.bucket, "array_add_works_with_strings"
       b.members.should eql ["john", "joe", "jason", "brian", "bob"]
     end
 
     it "works with arrays" do
-      a = Rico::Array.new RiakHelpers.bucket, "add_works_with_arrays"
-      a.add([1,2,3], [4,5,6], [7,8,9])
-      a.add(["a", "b", 37.2])
-      b = Rico::Array.new RiakHelpers.bucket, "add_works_with_arrays"
+      a = Rico::Array.new RiakHelpers.bucket, "array_add_works_with_arrays"
+      a.add [[1,2,3], [4,5,6], [7,8,9]]
+      a.add [["a", "b", 37.2]]
+      b = Rico::Array.new RiakHelpers.bucket, "array_add_works_with_arrays"
       b.members.should eql [[1,2,3], [4,5,6], [7,8,9], ["a", "b", 37.2]]
     end
 
     it "works with hashmaps" do
-      a = Rico::Array.new RiakHelpers.bucket, "add_works_with_hashmaps"
-      a.add({a: 1, b: 2}, {charlie: 6})
-      a.add({"usd" => 37.2, "eur" => 31.6})
-      b = Rico::Array.new RiakHelpers.bucket, "add_works_with_hashmaps"
+      a = Rico::Array.new RiakHelpers.bucket, "array_add_works_with_hashmaps"
+      a.add [{a: 1, b: 2}, {charlie: 6}]
+      a.add [{"usd" => 37.2, "eur" => 31.6}]
+      b = Rico::Array.new RiakHelpers.bucket, "array_add_works_with_hashmaps"
       b.members.should eql [{"a" => 1, "b" => 2}, {"charlie" => 6}, {"usd" => 37.2, "eur" => 31.6}]
     end
 
     it "works with mixed types" do
-      a = Rico::Array.new RiakHelpers.bucket, "add_works_with_mixed_types"
-      a.add({"usd" => 123.41, "cad" => 61.89})
-      a.add("Bears", "Beets", "Battlestar Galactica")
-      a.add(3.14159)
-      a.add(71)
-      b = Rico::Array.new RiakHelpers.bucket, "add_works_with_mixed_types"
+      a = Rico::Array.new RiakHelpers.bucket, "array_add_works_with_mixed_types"
+      a.add [{"usd" => 123.41, "cad" => 61.89}]
+      a.add ["Bears", "Beets", "Battlestar Galactica"]
+      a.add 3.14159
+      a.add 71
+      b = Rico::Array.new RiakHelpers.bucket, "array_add_works_with_mixed_types"
       b.members.should eql [{"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", "Battlestar Galactica", 3.14159, 71]
     end
   end
 
   describe "#remove" do
     it "removes existing values" do
-      a = Rico::Array.new RiakHelpers.bucket, "remove_removes"
-      a.add({"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", :slumdog, "Battlestar Galactica", 3.14159, 71)
-      b = Rico::Array.new RiakHelpers.bucket, "remove_removes"
-      b.remove(3.14159, "Beets")
-      b.remove("slumdog")
-      c = Rico::Array.new RiakHelpers.bucket, "remove_removes"
+      a = Rico::Array.new RiakHelpers.bucket, "array_remove_removes"
+      a.add [{"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", :slumdog, "Battlestar Galactica", 3.14159, 71]
+      b = Rico::Array.new RiakHelpers.bucket, "array_remove_removes"
+      b.remove [3.14159, "Beets"]
+      b.remove ["slumdog"]
+      c = Rico::Array.new RiakHelpers.bucket, "array_remove_removes"
       c.members.should eql [{"usd" => 123.41, "cad" => 61.89}, "Bears", "Battlestar Galactica", 71]
     end
 
     it "does not throw on removal on non-key" do
       lambda do
-        Rico::Array.new(RiakHelpers.bucket, "remove_nonkey").remove("bill")
+        Rico::Array.new(RiakHelpers.bucket, "array_remove_nonkey").remove("bill")
       end.should_not raise_error
     end
 
     it "does not throw on removal on non-value" do
       lambda do
-        a = Rico::Array.new RiakHelpers.bucket, "remove_nonvalue"
-        a.add 37, 68, 54
+        a = Rico::Array.new RiakHelpers.bucket, "array_remove_nonvalue"
+        a.add [37, 68, 54]
         a.remove "josh"
       end.should_not raise_error
     end
@@ -98,44 +98,44 @@ describe Rico::Array do
 
   describe "#members" do
     it "returns a list of members" do
-      a = Rico::Array.new RiakHelpers.bucket, "members_lists"
-      a.add({"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", "Battlestar Galactica", 3.14159, 71)
-      b = Rico::Array.new RiakHelpers.bucket, "members_lists"
+      a = Rico::Array.new RiakHelpers.bucket, "array_members_lists"
+      a.add [{"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", "Battlestar Galactica", 3.14159, 71]
+      b = Rico::Array.new RiakHelpers.bucket, "array_members_lists"
       b.members.should eql [{"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", "Battlestar Galactica", 3.14159, 71]
     end
   end
 
   describe "#member?" do
     it "returns a true if a member" do
-      a = Rico::Array.new RiakHelpers.bucket, "members_lists"
-      a.add({"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", "Battlestar Galactica", 3.14159, 71)
-      b = Rico::Array.new RiakHelpers.bucket, "members_lists"
+      a = Rico::Array.new RiakHelpers.bucket, "array_members_lists"
+      a.add [{"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", "Battlestar Galactica", 3.14159, 71]
+      b = Rico::Array.new RiakHelpers.bucket, "array_members_lists"
       b.member?({"usd" => 123.41, "cad" => 61.89}).should eql true
     end
 
     it "returns a true if not a member" do
-      a = Rico::Array.new RiakHelpers.bucket, "members_lists"
-      a.add({"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", "Battlestar Galactica", 3.14159, 71)
-      b = Rico::Array.new RiakHelpers.bucket, "members_lists"
+      a = Rico::Array.new RiakHelpers.bucket, "array_members_lists"
+      a.add [{"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", "Battlestar Galactica", 3.14159, 71]
+      b = Rico::Array.new RiakHelpers.bucket, "array_members_lists"
       b.member?({"usd" => 123.42, "cad" => 61.89}).should eql false
     end
   end
 
   describe "#length" do
     it "returns zero for an empty list" do
-      a = Rico::Array.new RiakHelpers.bucket, "length_empty"
+      a = Rico::Array.new RiakHelpers.bucket, "array_length_empty"
       a.length.should eql 0
     end
 
     it "returns the number of entries" do
-      a = Rico::Array.new RiakHelpers.bucket, "length_6"
-      a.add(1, 2, 3, 4, 5, 6)
+      a = Rico::Array.new RiakHelpers.bucket, "array_length_6"
+      a.add [1, 2, 3, 4, 5, 6]
       a.length.should eql 6
     end
 
     it "is aliased to #count" do
-      a = Rico::Array.new RiakHelpers.bucket, "length_alias"
-      a.add(1, 2, 3, 4, 5, 6)
+      a = Rico::Array.new RiakHelpers.bucket, "array_length_alias"
+      a.add [1, 2, 3, 4, 5, 6]
       a.count.should eql 6
     end
   end
@@ -164,8 +164,8 @@ describe Rico::Array do
   end
 
   it "is enumerable" do
-    a = Rico::Array.new RiakHelpers.bucket, "enumerable"
-    a.add(3, 1, 4, 1, 5, 9)
+    a = Rico::Array.new RiakHelpers.bucket, "array_enumerable"
+    a.add [3, 1, 4, 1, 5, 9]
     a.to_a.should eql [3, 1, 4, 1, 5, 9]
     a.each { }.length.should eql 6
     a.map {|x| x + 1 }.should eql [4, 2, 5, 2, 6, 10]

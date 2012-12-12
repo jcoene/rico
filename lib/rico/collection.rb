@@ -11,7 +11,7 @@ module Rico
     # items - items to be added to the array
     #
     # Returns the result of the store operation
-    def add(*items)
+    def add(items)
       mutate build_map_add(items)
     end
 
@@ -20,7 +20,7 @@ module Rico
     # items - items to be removed from the array
     #
     # Returns the result of the store operation
-    def remove(*items)
+    def remove(items)
       mutate build_map_remove(items)
     end
 
@@ -31,24 +31,6 @@ module Rico
     # Returns true or false
     def member?(item)
       members.include? item
-    end
-
-    protected
-
-    def build_map_add(items)
-      { "_type" => type_key, "_values" => compute_add(items) }
-    end
-
-    def build_map_remove(items)
-      { "_type" => type_key, "_values" => compute_remove(items), "_deletes" => items }
-    end
-
-    def compute_add(items)
-      members + items
-    end
-
-    def compute_remove(items)
-      members - items
     end
   end
 end
