@@ -3,13 +3,16 @@ require "riak"
 require "rico/object"
 require "rico/collection"
 
+require "rico/value"
+
 require "rico/array"
 require "rico/list"
-require "rico/map"
 require "rico/set"
-require "rico/sorted_map"
 require "rico/sorted_set"
-require "rico/value"
+
+require "rico/map"
+require "rico/sorted_map"
+require "rico/capped_sorted_map"
 
 require "rico/resolver"
 

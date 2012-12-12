@@ -4,14 +4,17 @@ module Rico
 
     def_delegators :riak_object, :conflict?, :content_type, :content_type=, :data, :delete, :store, :raw_data
 
+    attr_accessor :bucket, :key
+
     # Initialize an object with a bucket and key
     #
     # bucket - the name of the bucket (not prefixed by a namespace)
     # key - the name of the key
     #
     # Returns nothing
-    def initialize(bucket, key)
+    def initialize(bucket, key, options={})
       @bucket, @key = bucket, key
+      options.each {|k,v| send("#{k}=", v)}
     end
 
     # Sets a new value on the object and stores it
