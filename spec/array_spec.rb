@@ -97,6 +97,13 @@ describe Rico::Array do
   end
 
   describe "#members" do
+    it "asserts value type as array" do
+      a = Rico::Map.new RiakHelpers.bucket, "array_members_assert_type"
+      a.add({"a" => 1})
+      b = Rico::Array.new RiakHelpers.bucket, "array_members_assert_type"
+      lambda { b.members }.should raise_error(TypeError)
+    end
+
     it "returns a list of members" do
       a = Rico::Array.new RiakHelpers.bucket, "array_members_lists"
       a.add [{"usd" => 123.41, "cad" => 61.89}, "Bears", "Beets", "Battlestar Galactica", 3.14159, 71]

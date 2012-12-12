@@ -2,7 +2,7 @@ module Rico
   module Object
     extend Forwardable
 
-    def_delegators :riak_object, :conflict?, :content_type, :content_type=, :data, :delete, :store, :raw_data
+    def_delegators :riak_object, :conflict?, :content_type, :content_type=, :delete, :store, :raw_data
 
     attr_accessor :bucket, :key
 
@@ -15,6 +15,19 @@ module Rico
     def initialize(bucket, key, options={})
       @bucket, @key = bucket, key
       options.each {|k,v| send("#{k}=", v)}
+    end
+
+    # Retrieves data from Riak
+    #
+    # Raises an error on type mismatch
+    def data
+      result = riak_object.data || {}
+
+      if result["_type"] && (result["_type"] != type_key)
+        raise TypeError, "#{@bucket}:#{@key} expected type to be #{type_key}, got #{result["_type"]}"
+      end
+
+      result
     end
 
     # Sets a new value on the object and stores it
@@ -39,6 +52,16 @@ module Rico
     def type_key
       name = self.class.name.split("::").last
       Rico::TYPES[name]
+    end
+
+    def assert_type(klass, &block)
+      value = block.call
+
+      unless value.class == klass
+        raise TypeError, "#{@bucket}:#{@key} expected value to be #{klass.name}, got #{value.class}"
+      end
+
+      value
     end
 
     def riak_object

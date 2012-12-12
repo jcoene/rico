@@ -85,6 +85,15 @@ describe Rico::Map do
     end
   end
 
+  describe "#members" do
+    it "asserts value type as hash" do
+      a = Rico::Array.new RiakHelpers.bucket, "map_members_assert_type"
+      a.add [1,2,3]
+      b = Rico::Map.new RiakHelpers.bucket, "map_members_assert_type"
+      lambda { b.members }.should raise_error(TypeError)
+    end
+  end
+
   describe "#length" do
     it "returns zero for an empty list" do
       a = Rico::Map.new RiakHelpers.bucket, "map_length_empty"

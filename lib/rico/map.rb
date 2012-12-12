@@ -7,7 +7,9 @@ module Rico
     #
     # Returns the data in the object as an array
     def members
-      ((data || {})["_values"] || {})
+      assert_type(::Hash) do
+        data["_values"] || {}
+      end
     end
 
     # Resolve conflict between one or more RObject siblings
