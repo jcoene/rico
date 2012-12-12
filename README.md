@@ -148,6 +148,38 @@ s.get       # => [1, 2, 3]
 s.raw_data  # => "\u001F\x8B\b\u0000G...."
 ```
 
+## Under The Hood
+
+Objects are stored in a simple map encoded to JSON.
+
+**Array, List, Set and SortedSet** types look like this:
+
+```json
+{ "_type": "sset", "_values": [1,2,3], "_deletes": [4] }
+```
+
+The *_deletes* field acts as a temporary tombstone for preserve deletes during conflict resolution. The field will normally contain the deletes processed during the last write, or the cumulative deletes processed during the last sibling merge. The value of _deletes is intentionally forgotten after a successful read and will not taint future operations.
+
+Conflict resolution works by adding the difference between value arrays, removing deleted values and returning the result. This implementation is susceptible to sticky deletes - if different clients delete and add the same value simultenously the delete will ultimately win and the value is left out.
+
+**Map, SortedMap and CappedSortedMap** types look like this:
+
+```json
+{ "_type": "csmap", "_values": {"a": 1, "b": 2, "c": 3}, "_deletes": ["d"] }
+```
+
+The *_deletes* field for map objects contains only the keys deleted.
+
+Conflict resolution works by merging value hashes, removing deleted keys and returning the result. This implementation is susceptible to sticky deletes - if different clients delete and add the same key simultenously the delete will ultimately win and the value is left out.
+
+**Value** type looks like this:
+
+```json
+{ "_type": "value", "_value": "Hipsters love modern folk rock" }
+```
+
+Conflict resolution is handled by last-write-wins.
+
 ## Notes
 
 ### Enumerable
@@ -157,10 +189,6 @@ Enumerable-looking types are indeed Enumerable
 ### Persistence
 
 Data is persisted at operation time. For example, List#add(5) will immediately update the record in Riak. It'd generally be wise to compute a list of values to be added or removed and then issue a single operation.
-
-## TODO
-
-- Ability to provide custom sibling resolution callbacks
 
 ## Contributing
 
