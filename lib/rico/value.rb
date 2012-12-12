@@ -49,6 +49,11 @@ module Rico
 
     protected
 
+    # Constructs a document map for the new value
+    #
+    # value - Value to include in map
+    #
+    # Returns a Hash representing the document map
     def build_map(value)
       { "_type" => type_key, "_value" => value }
     end

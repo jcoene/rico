@@ -37,18 +37,38 @@ module Rico
 
     protected
 
+    # Constructs a document map for the given operation
+    #
+    # items - Items to add to members
+    #
+    # Returns a Hash representing the document map
     def build_map_add(items)
       { "_type" => type_key, "_values" => compute_add(items) }
     end
 
+    # Constructs a document map for the given operation
+    #
+    # items - Items to remove to members
+    #
+    # Returns a Hash representing the document map
     def build_map_remove(items)
       { "_type" => type_key, "_values" => compute_remove(items), "_deletes" => items }
     end
 
+    # Add items to our member array
+    #
+    # items - Items to add
+    #
+    # Returns an Array of the resulting addition
     def compute_add(items)
       members + Array(items)
     end
 
+    # Remove items from our member array
+    #
+    # items - Items to remove. Can be an array of values or a single object
+    #
+    # Returns an Array of the new object
     def compute_remove(items)
       members - Array(items)
     end

@@ -14,28 +14,6 @@ Add rico to your Gemfile and `bundle install`:
 gem "rico"
 ```
 
-## Usage
-
-Instantiate a Rico object with a **bucket** and a **key** then perform operations.
-
-Here's an example of how to use a set to manage a list of followed users:
-
-```ruby
-follows = Rico::Set.new "follows", @user.id
-
-follows.member? @other_user.id  # => false
-
-follows.add @other_user.id
-
-follows.member? @other_user.id  # => true
-follows.length                  # => 1
-
-follows.remove @other_user.id
-
-follows.member? @other_user.id  # => false
-follows.length                  # => 0
-```
-
 ## Configuration
 
 By default, Rico uses a generic Riak::Client instance for operations. You can specify your own options for the Riak client (perhaps inside of a rails initializer) like so:
@@ -55,15 +33,18 @@ Rico.configure do |c|
 end
 ```
 
-## Data Types
+## Supported Data Types
 
 **Arrays** - sequence of values
 
 ```ruby
 a = Rico::Array.new "bucket", "key"
-a.add [3, 1, 1, 4, 2]
-a.members   # => [3, 1, 1, 4, 2]
-a.length    # => 5
+a.add [3, 1, 1, 4, 2]   # writes to riak
+a.members               # => [3, 1, 1, 4, 2]
+a.length                # => 5
+a.remove [2, 4]         # writes to riak
+a.members               # => [3, 1, 1]
+a.raw_data              # => '{"_type":"array","_values":[3,1,1],"_deletes":[2,4]}'
 ```
 
 **Lists** - sorted sequence of values
@@ -71,8 +52,7 @@ a.length    # => 5
 ```ruby
 l = Rico::List.new "bucket", "key"
 l.add [3, 1, 1, 4, 2]
-l.members   # => [1, 1, 2, 3, 4]
-l.length    # => 5
+l.members               # => [1, 1, 2, 3, 4]
 ```
 
 **Sets** - unique sequence of values
@@ -80,8 +60,7 @@ l.length    # => 5
 ```ruby
 s = Rico::Set.new "bucket", "key"
 s.add [3, 1, 1, 4, 2]
-s.members   # => [3, 1, 4, 2]
-s.length    # => 4
+s.members               # => [3, 1, 4, 2]
 ```
 
 **Sorted Sets** - unique, sorted sequence of values
@@ -89,8 +68,8 @@ s.length    # => 4
 ```ruby
 s = Rico::SortedSet.new "bucket", "key"
 s.add [3, 1, 1, 4, 2]
-s.members   # => [1, 2, 3, 4]
-s.length    # => 4
+s.members               # => [1, 2, 3, 4]
+s.reduce(&:+)
 ```
 
 **Maps** - key-value mappings
@@ -99,8 +78,7 @@ s.length    # => 4
 m = Rico::Map.new "bucket", "key"
 m.add({"a" => 1})
 m.add({"b" => 2, "c" => 3})
-m.members   # => {"a" => 1, "b" => 2, "c" => 3}
-m.length    # => 3
+m.members               # => {"a"=>1, "b"=>2, "c"=>3}
 ```
 
 **Sorted Maps** - key-value mappings sorted by key
@@ -109,8 +87,8 @@ m.length    # => 3
 m = Rico::SortedMap.new "bucket", "key"
 m.add({"b" => 2, "c" => 3})
 m.add({"a" => 1})
-m.members   # => {"a" => 1, "b" => 2, "c" => 3}
-m.length    # => 3
+m.members               # => {"a"=>1, "b"=>2, "c"=>3}
+m.raw_data              # => '{"_type":"smap","_values":{"a":1,"b":2,"c":3}}'
 ```
 
 **Capped Sorted Maps** - key-value mappings sorted by key and bound by size
@@ -119,19 +97,17 @@ m.length    # => 3
 m = Rico::CappedSortedMap.new "bucket", "key", limit: 2
 m.add({"b" => 2, "c" => 3})
 m.add({"a" => 1})
-m.members   # => {"b" => 2, "c" => 3}
-m.length    # => 2
+m.members               # => {"b"=>2, "c"=>3}
+m.length                # => 2
 ```
 
 **Values** - generic serialized values
 
 ```ruby
 v = Rico::Value.new "bucket", "key"
-v.exists?   # => false
-v.get       # => nil
+v.get                   # => nil
 v.set "bob"
-v.get       # => "bob"
-v.exists?   # => true
+v.get                   # => "bob"
 ```
 
 ## Content Types
@@ -144,8 +120,9 @@ v.exists?   # => true
 s = Rico::Set.new "bucket", "key"
 s.content_type = "application/x-gzip"
 s.add [1,2,3]
-s.get       # => [1, 2, 3]
-s.raw_data  # => "\u001F\x8B\b\u0000G...."
+s.members               # => [1, 2, 3]
+s.data                  # => {"_type"=>"set", "_values"=>[1, 2, 3]}
+s.raw_data              # => "\u001F\x8B\b\u0000G...."
 ```
 
 ## Under The Hood

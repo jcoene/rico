@@ -31,19 +31,39 @@ module Rico
 
     protected
 
+    # Constructs a document map for the given operation
+    #
+    # items - Items to add to members
+    #
+    # Returns a Hash representing the document map
     def build_map_add(items)
       { "_type" => type_key, "_values" => compute_add(items) }
     end
 
+    # Constructs a document map for the given operation
+    #
+    # items - Items to remove to members
+    #
+    # Returns a Hash representing the document map
     def build_map_remove(items)
       keys = extract_keys(items)
       { "_type" => type_key, "_values" => compute_remove(items), "_deletes" => keys }
     end
 
+    # Add items to our member hash
+    #
+    # items - Items to add
+    #
+    # Returns a Hash of the resulting merge
     def compute_add(items)
       members.merge(items)
     end
 
+    # Remove items from our member hash
+    #
+    # items - Items to remove. Can be a hash, array of keys or single key
+    #
+    # Returns a Hash of the new object
     def compute_remove(items)
       keys = extract_keys(items)
       members.delete_if {|k,v| keys.include? k.to_s }

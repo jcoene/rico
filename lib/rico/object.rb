@@ -49,11 +49,20 @@ module Rico
 
     protected
 
+    # Determines an appropriate type key for the object
+    #
+    # Returns a String
     def type_key
       name = self.class.name.split("::").last
       Rico::TYPES[name]
     end
 
+    # Verifies the result of a given block is of a given type.
+    #
+    # klass - Class to test type
+    # block - Block to call that produces value for test
+    #
+    # Returns the result of the block on success, raises a TypeError on failure
     def assert_type(klass, &block)
       value = block.call
 
@@ -64,6 +73,9 @@ module Rico
       value
     end
 
+    # Instantiates and memoizes a Riak::RObject instance for our bucket and key
+    #
+    # Returns the Riak::RInstance object
     def riak_object
       @riak_object ||= Rico.bucket(@bucket).get_or_new @key
     end
