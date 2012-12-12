@@ -23,10 +23,11 @@ module Rico
   TYPES = {
     "Array" => "array",
     "List" => "list",
-    "Map" => "map",
-    "Set" => "set",
     "SortedSet" => "sset",
+    "Set" => "set",
+    "Map" => "map",
     "SortedMap" => "smap",
+    "CappedSortedMap" => "csmap",
     "Value" => "value"
   }
 
