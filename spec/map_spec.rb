@@ -20,6 +20,14 @@ describe Rico::Map do
       b = Rico::Map.new RiakHelpers.bucket, "map_add_multiple_writes"
       b.members.should eql({"a" => 1, "b" => 2, "c" => 3, "d" => 4, "e" => 5})
     end
+
+    it "merges in the right order with implicit deduping" do
+      a = Rico::Map.new RiakHelpers.bucket, "map_add_order_dedupe"
+      a.add({"a" => 1, "b" => 2, "c" => 3})
+      a.add({"b" => "B", "c" => "C"})
+      b = Rico::Map.new RiakHelpers.bucket, "map_add_order_dedupe"
+      b.members.should eql({"a" => 1, "b" => "B", "c" => "C"})
+    end
   end
 
   describe "#remove" do
@@ -66,6 +74,14 @@ describe Rico::Map do
       b.remove({"a" => 1, "b" => 2})
       c = Rico::Map.new RiakHelpers.bucket, "map_remove_single_key_tuple"
       c.members.should eql({"c" => 3})
+    end
+
+    it "merges in the right order with implicit deduping" do
+      a = Rico::Map.new RiakHelpers.bucket, "map_remove_order_dedupe"
+      a.add({"a" => 1, "b" => 2, "c" => 3, "d" => 4})
+      a.remove({"b" => 2, "c" => 3, "c" => 3, "c" => 3})
+      b = Rico::Map.new RiakHelpers.bucket, "map_remove_order_dedupe"
+      b.members.should eql({"a" => 1, "d" => 4})
     end
   end
 
