@@ -5,6 +5,7 @@ require "rico/collection"
 
 require "rico/array"
 require "rico/list"
+require "rico/map"
 require "rico/set"
 require "rico/sorted_set"
 require "rico/value"
@@ -18,8 +19,10 @@ module Rico
   TYPES = {
     "Array" => "array",
     "List" => "list",
+    "Map" => "map",
     "Set" => "set",
     "SortedSet" => "sset",
+    "SortedMap" => "smap",
     "Value" => "value"
   }
 
