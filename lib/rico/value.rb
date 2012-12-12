@@ -40,8 +40,10 @@ module Rico
     #
     # Returns a single RObject result or nil
     def self.resolve(robject)
-      obj = Riak::RObject.new(robject.bucket, robject.key)
-      obj.data = robject.siblings.first.data
+      winner = robject.siblings.sort {|a,b| b.last_modified <=> a.last_modified }.first
+
+      obj = robject.dup
+      obj.siblings = [winner]
       obj
     end
 

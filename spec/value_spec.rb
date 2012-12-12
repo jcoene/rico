@@ -25,7 +25,7 @@ describe Rico::Value do
       a = Rico::Value.new RiakHelpers.bucket, "value_gzip_content_type"
       a.content_type = "application/x-gzip"
       a.set "JOHN DOE"
-      gunzip(a.raw_data).should eql "\"JOHN DOE\""
+      gunzip(a.raw_data).should eql({"_type" => "value", "_value" => "JOHN DOE"}.to_json)
       a.content_type.should eql "application/x-gzip"
     end
 
@@ -108,23 +108,27 @@ describe Rico::Value do
   end
 
   describe ".resolve" do
-    it "just returns the first sibling" do
-      datas = ["Tom", "Jerry"]
-      conflicted = RiakHelpers.build_conflicted_robject "value_resolve_simple", datas
-      result = Rico::Value.resolve(conflicted)
-      result.data.should eql "Tom"
-    end
-
-    it "properly deletes deleted values after resolve" do
+    it "just returns the last modified sibling" do
       datas = [
-        { "_type" => "array", "_values" => [1,2,3,4] },
-        { "_type" => "array", "_values" => [1,2,3], "_deletes" => [4] }
+        { "_type" => "value", "_value" => "Oldest" },
+        { "_type" => "value", "_value" => "Middle" },
+        { "_type" => "value", "_value" => "Newest" },
+        { "_type" => "value", "_value" => "Middle" },
+        { "_type" => "value", "_value" => "Middle" }
       ]
-      conflicted = RiakHelpers.build_conflicted_robject "array_resolve_delete", datas
-      result = Rico::Array.resolve(conflicted)
-      result.data["_values"].should eql [1,2,3]
-      result.data["_deletes"].should eql [4]
+      times = [
+        Time.utc(2012, 10, 10, 10, 10, 10),
+        Time.utc(2013, 10, 10, 10, 10, 10),
+        Time.utc(2014, 10, 10, 10, 10, 10),
+        Time.utc(2013, 10, 10, 10, 10, 10),
+        Time.utc(2013, 10, 10, 10, 10, 10)
+      ]
+      conflicted = RiakHelpers.build_conflicted_robject "value_resolve_simple", datas
+      conflicted.siblings.each_with_index do |s, i|
+        s.last_modified = times[i]
+      end
+      result = Rico::Value.resolve(conflicted)
+      result.data.should eql({ "_type" => "value", "_value" => "Newest" })
     end
   end
-
 end
