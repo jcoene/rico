@@ -5,14 +5,18 @@ module Rico
     # Gets the value of the object
     #
     # Returns the deserialized value
-    alias_method :get, :data
+    def get
+      (data || {})["_value"]
+    end
 
     # Sets and stores the new value for the object
     #
     # value - the new value to store
     #
     # Returns the result of the store operation
-    alias_method :set, :mutate
+    def set(value)
+      mutate build_map(value)
+    end
 
     # Sets the value if it does not exist
     #
@@ -39,6 +43,12 @@ module Rico
       obj = Riak::RObject.new(robject.bucket, robject.key)
       obj.data = robject.siblings.first.data
       obj
+    end
+
+    protected
+
+    def build_map(value)
+      { "_type" => type_key, "_value" => value }
     end
   end
 end
